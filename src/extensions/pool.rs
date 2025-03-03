@@ -10,7 +10,7 @@ use alloy::{
     network::Network,
     providers::Provider,
 };
-use alloy_primitives::{Address, ChainId, B256};
+use alloy_primitives::{Address, ChainId, B256, U160};
 use uniswap_lens::{
     bindings::{
         ierc20metadata::IERC20Metadata, iuniswapv3pool::IUniswapV3Pool::IUniswapV3PoolInstance,
@@ -134,6 +134,7 @@ impl Pool {
         token_a: Address,
         token_b: Address,
         fee: FeeAmount,
+        sqrt_price_x96: U160,
         provider: P,
         block_id: Option<BlockId>,
     ) -> Result<Self, Error>
@@ -141,12 +142,15 @@ impl Pool {
         N: Network,
         P: Provider<N>,
     {
+        assert!(
+            !sqrt_price_x96.is_zero(),
+            "Pool has been created but not yet initialized"
+        );
         let block_id = block_id.unwrap_or(BlockId::Number(BlockNumberOrTag::Latest));
         let pool_contract = get_pool_contract_at(pool, provider.root());
         let token_a_contract = IERC20Metadata::new(token_a, provider.root());
         let token_b_contract = IERC20Metadata::new(token_b, provider.root());
-        // TODO: use multicall
-        let slot_0 = pool_contract.slot0().block(block_id).call().await?;
+
         let liquidity = pool_contract.liquidity().block(block_id).call().await?._0;
         let token_a_decimals = token_a_contract.decimals().block(block_id).call().await?._0;
         let token_a_name = token_a_contract.name().block(block_id).call().await?._0;
@@ -154,11 +158,7 @@ impl Pool {
         let token_b_decimals = token_b_contract.decimals().block(block_id).call().await?._0;
         let token_b_name = token_b_contract.name().block(block_id).call().await?._0;
         let token_b_symbol = token_b_contract.symbol().block(block_id).call().await?._0;
-        let sqrt_price_x96 = slot_0.sqrtPriceX96;
-        assert!(
-            !sqrt_price_x96.is_zero(),
-            "Pool has been created but not yet initialized"
-        );
+
         Self::new(
             token!(
                 chain_id,
