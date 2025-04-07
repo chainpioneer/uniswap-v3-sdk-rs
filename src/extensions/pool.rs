@@ -114,6 +114,7 @@ impl Pool {
             fee,
             sqrt_price_x96,
             liquidity,
+            fee.tick_spacing().as_i32(),
         )
     }
     /// Get a [`Pool`] struct from pool address
@@ -152,6 +153,7 @@ impl Pool {
         let token_b_contract = IERC20Metadata::new(token_b, provider.root());
 
         let liquidity = pool_contract.liquidity().block(block_id).call().await?._0;
+        let tick_spacing = pool_contract.tickSpacing().block(block_id).call().await?._0;
         let token_a_decimals = token_a_contract.decimals().block(block_id).call().await?._0;
         let token_a_name = token_a_contract.name().block(block_id).call().await?._0;
         let token_a_symbol = token_a_contract.symbol().block(block_id).call().await?._0;
@@ -177,6 +179,7 @@ impl Pool {
             fee,
             sqrt_price_x96,
             liquidity,
+            tick_spacing.as_i32(),
         )
     }
 }
@@ -262,6 +265,94 @@ impl<I: TickIndex> Pool<EphemeralTickMapDataProvider<I>> {
             pool.fee,
             pool.sqrt_ratio_x96,
             pool.liquidity,
+            pool.tick_spacing.to_i24().as_i32(),
+            tick_data_provider,
+        )
+    }
+    /// Get a [`Pool`] struct with tick data provider from pool key
+    ///
+    /// ## Arguments
+    ///
+    /// * `chain_id`: The chain id
+    /// * `factory`: The factory address
+    /// * `token_a`: One of the tokens in the pool
+    /// * `token_b`: The other token in the pool
+    /// * `fee`: Fee tier of the pool
+    /// * `provider`: The alloy provider
+    /// * `block_id`: Optional block number to query.
+    ///
+    /// ## Returns
+    ///
+    /// A [`Pool`] struct with tick data provider
+    ///
+    /// ## Examples
+    ///
+    /// ```
+    /// use alloy::{eips::BlockId, providers::ProviderBuilder};
+    /// use alloy_primitives::address;
+    /// use uniswap_v3_sdk::prelude::*;
+    ///
+    /// #[tokio::main]
+    /// async fn main() {
+    ///     dotenv::dotenv().ok();
+    ///     let rpc_url = std::env::var("MAINNET_RPC_URL").unwrap().parse().unwrap();
+    ///     let provider = ProviderBuilder::new().on_http(rpc_url);
+    ///     let block_id = Some(BlockId::from(17000000));
+    ///     let pool = Pool::<EphemeralTickMapDataProvider>::from_pool_key_with_tick_data_provider(
+    ///         1,
+    ///         FACTORY_ADDRESS,
+    ///         address!("2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"),
+    ///         address!("C02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"),
+    ///         FeeAmount::LOW,
+    ///         provider,
+    ///         block_id,
+    ///     )
+    ///     .await
+    ///     .unwrap();
+    /// }
+    /// ```
+    #[inline]
+    pub async fn from_sqrt_ratio<N, P>(
+        chain_id: ChainId,
+        pool_address: Address,
+        token_a: Address,
+        token_b: Address,
+        fee: FeeAmount,
+        sqrt_ratio: U160,
+        tick_spacing: i32,
+        provider: P,
+        block_id: Option<BlockId>,
+    ) -> Result<Self, Error>
+    where
+        N: Network,
+        P: Provider<N>,
+    {
+        let pool = Pool::from_pool_address(
+            chain_id,
+            pool_address,
+            token_a,
+            token_b,
+            fee,
+            sqrt_ratio,
+            provider.root(),
+            block_id,
+        )
+        .await?;
+        let tick_data_provider = EphemeralTickMapDataProvider::new(
+            pool_address,
+            provider,
+            None,
+            None,
+            block_id,
+        )
+        .await?;
+        Self::new_with_tick_data_provider(
+            pool.token0,
+            pool.token1,
+            pool.fee,
+            pool.sqrt_ratio_x96,
+            pool.liquidity,
+            tick_spacing,
             tick_data_provider,
         )
     }

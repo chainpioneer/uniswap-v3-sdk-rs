@@ -243,6 +243,7 @@ impl<TP: TickDataProvider> Position<TP> {
             self.pool.fee,
             sqrt_ratio_x96_lower,
             0, // liquidity doesn't matter
+            self.pool.tick_spacing.to_i24().as_i32(),
         )?;
         let pool_upper = Pool::new(
             self.pool.token0.clone(),
@@ -250,6 +251,7 @@ impl<TP: TickDataProvider> Position<TP> {
             self.pool.fee,
             sqrt_ratio_x96_upper,
             0, // liquidity doesn't matter
+            self.pool.tick_spacing.to_i24().as_i32(),
         )?;
 
         // Because the router is imprecise, we need to calculate the position that will be created
@@ -262,6 +264,7 @@ impl<TP: TickDataProvider> Position<TP> {
                 self.pool.fee,
                 self.pool.sqrt_ratio_x96,
                 self.pool.liquidity,
+                self.pool.tick_spacing.to_i24().as_i32(),
             )?,
             self.tick_lower.try_into().unwrap(),
             self.tick_upper.try_into().unwrap(),
@@ -319,6 +322,7 @@ impl<TP: TickDataProvider> Position<TP> {
             self.pool.fee,
             sqrt_ratio_x96_lower,
             0, // liquidity doesn't matter
+            self.pool.tick_spacing.to_i24().as_i32(),
         )?;
         let pool_upper = Pool::new(
             self.pool.token0.clone(),
@@ -326,6 +330,7 @@ impl<TP: TickDataProvider> Position<TP> {
             self.pool.fee,
             sqrt_ratio_x96_upper,
             0, // liquidity doesn't matter
+            self.pool.tick_spacing.to_i24().as_i32(),
         )?;
 
         // we want the smaller amounts...

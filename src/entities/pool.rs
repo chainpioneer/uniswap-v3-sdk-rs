@@ -16,6 +16,7 @@ where
     pub fee: FeeAmount,
     pub sqrt_ratio_x96: U160,
     pub liquidity: u128,
+    pub tick_spacing: TP::Index,
     pub tick_current: TP::Index,
     pub tick_data_provider: TP,
 }
@@ -54,6 +55,7 @@ impl Pool {
         fee: FeeAmount,
         sqrt_ratio_x96: U160,
         liquidity: u128,
+        tick_spacing: i32,
     ) -> Result<Self, Error> {
         Self::new_with_tick_data_provider(
             token_a,
@@ -61,6 +63,7 @@ impl Pool {
             fee,
             sqrt_ratio_x96,
             liquidity,
+            tick_spacing,
             NoTickDataProvider,
         )
     }
@@ -137,7 +140,7 @@ impl<TP: TickDataProvider> Pool<TP> {
 
     #[inline]
     pub fn tick_spacing(&self) -> TP::Index {
-        TP::Index::from_i24(self.fee.tick_spacing())
+        self.tick_spacing
     }
 
     /// Returns true if the token is either token0 or token1
@@ -215,6 +218,7 @@ impl<TP: TickDataProvider> Pool<TP> {
         fee: FeeAmount,
         sqrt_ratio_x96: U160,
         liquidity: u128,
+        tick_spacing: i32,
         tick_data_provider: TP,
     ) -> Result<Self, Error> {
         let (token0, token1) = if token_a.sorts_before(&token_b)? {
@@ -229,6 +233,7 @@ impl<TP: TickDataProvider> Pool<TP> {
             sqrt_ratio_x96,
             liquidity,
             tick_current: TP::Index::from_i24(sqrt_ratio_x96.get_tick_at_sqrt_ratio()?),
+            tick_spacing: TP::Index::from_i24(tick_spacing.to_i24()),
             tick_data_provider,
         })
     }
@@ -669,6 +674,7 @@ mod tests {
                 FeeAmount::LOW,
                 encode_sqrt_ratio_x96(1, 1),
                 ONE_ETHER.into_limbs()[0] as u128,
+                FeeAmount::LOW.tick_spacing(),
                 TickListDataProvider::new(
                     vec![
                         Tick::new(
