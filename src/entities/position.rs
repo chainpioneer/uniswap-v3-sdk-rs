@@ -521,6 +521,7 @@ mod tests {
             FeeAmount::LOW,
             *POOL_SQRT_RATIO_START,
             0,
+            TICK_SPACING.as_i32(),
         )
         .unwrap()
     });
@@ -767,7 +768,7 @@ mod tests {
     #[test]
     fn burn_amounts_with_slippage_is_correct_for_pool_at_min_price() {
         let position = Position::new(
-            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0).unwrap(),
+            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, TICK_SPACING.as_i32()).unwrap(),
             100e18 as u128,
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING).as_i32(),
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * TWO).as_i32(),
@@ -789,6 +790,7 @@ mod tests {
                 FeeAmount::LOW,
                 MAX_SQRT_RATIO - ONE,
                 0,
+                FeeAmount::LOW.tick_spacing().as_i32(),
             )
             .unwrap(),
             100e18 as u128,
@@ -902,7 +904,7 @@ mod tests {
     #[test]
     fn mint_amounts_is_correct_for_pool_at_min_price() {
         let mut position = Position::new(
-            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0).unwrap(),
+            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, FeeAmount::LOW.tick_spacing().as_i32()).unwrap(),
             100e18 as u128,
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING).as_i32(),
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * TWO).as_i32(),
@@ -924,6 +926,7 @@ mod tests {
                 FeeAmount::LOW,
                 MAX_SQRT_RATIO - ONE,
                 0,
+                FeeAmount::LOW.tick_spacing().as_i32(),
             )
             .unwrap(),
             100e18 as u128,

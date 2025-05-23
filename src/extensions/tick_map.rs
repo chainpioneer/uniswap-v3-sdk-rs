@@ -5,7 +5,7 @@
 use crate::prelude::*;
 use alloc::vec::Vec;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
-use alloy_primitives::private::serde::Serialize;
+use serde::Serialize;
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq, Default)]
 pub struct TickMap<I = I24> {

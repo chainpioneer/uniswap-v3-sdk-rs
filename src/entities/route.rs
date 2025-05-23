@@ -189,6 +189,7 @@ mod tests {
                 FeeAmount::MEDIUM,
                 encode_sqrt_ratio_x96(1, 5),
                 0,
+                10,
             )
             .unwrap()
         });
@@ -199,6 +200,7 @@ mod tests {
                 FeeAmount::MEDIUM,
                 encode_sqrt_ratio_x96(15, 30),
                 0,
+                FeeAmount::MEDIUM.tick_spacing().as_i32(),
             )
             .unwrap()
         });
@@ -209,6 +211,7 @@ mod tests {
                 FeeAmount::MEDIUM,
                 encode_sqrt_ratio_x96(3, 1),
                 0,
+                FeeAmount::MEDIUM.tick_spacing().as_i32(),
             )
             .unwrap()
         });
@@ -219,6 +222,7 @@ mod tests {
                 FeeAmount::MEDIUM,
                 encode_sqrt_ratio_x96(1, 7),
                 0,
+                FeeAmount::MEDIUM.tick_spacing().as_i32(),
             )
             .unwrap()
         });

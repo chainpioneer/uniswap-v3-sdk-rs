@@ -834,6 +834,7 @@ mod tests {
             fee_amount,
             sqrt_ratio_x96,
             liquidity,
+            fee_amount.tick_spacing().as_i32(),
             TickListDataProvider::new(
                 vec![
                     Tick::new(

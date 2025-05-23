@@ -70,6 +70,7 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(1, 1),
             0,
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap()
     });

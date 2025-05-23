@@ -74,6 +74,7 @@ pub(crate) static POOL_0_1: Lazy<Pool> = Lazy::new(|| {
         FeeAmount::MEDIUM,
         encode_sqrt_ratio_x96(1, 1),
         0,
+        FeeAmount::MEDIUM.tick_spacing().as_i32(),
     )
     .unwrap()
 });
@@ -84,6 +85,7 @@ pub(crate) static POOL_0_WETH: Lazy<Pool> = Lazy::new(|| {
         FeeAmount::MEDIUM,
         encode_sqrt_ratio_x96(1, 1),
         0,
+        FeeAmount::MEDIUM.tick_spacing().as_i32(),
     )
     .unwrap()
 });
@@ -94,6 +96,7 @@ pub(crate) static POOL_1_WETH: Lazy<Pool> = Lazy::new(|| {
         FeeAmount::MEDIUM,
         encode_sqrt_ratio_x96(1, 1),
         0,
+        FeeAmount::MEDIUM.tick_spacing().as_i32(),
     )
     .unwrap()
 });
@@ -105,6 +108,7 @@ pub(crate) fn make_pool(token0: Token, token1: Token) -> Pool<TickListDataProvid
         FEE_AMOUNT,
         SQRT_RATIO_X96,
         LIQUIDITY,
+        FEE_AMOUNT.tick_spacing().as_i32(),
         TickListDataProvider::new(
             vec![
                 Tick::new(
