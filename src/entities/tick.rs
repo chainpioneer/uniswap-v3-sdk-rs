@@ -5,8 +5,9 @@ use core::{
     hash::Hash,
     ops::{Add, BitAnd, Div, Mul, Rem, Shl, Shr, Sub},
 };
+use serde::Serialize;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct Tick<I = i32> {
     pub index: I,
     pub liquidity_gross: u128,
