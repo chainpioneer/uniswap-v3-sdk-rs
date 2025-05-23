@@ -7,7 +7,6 @@ use crate::prelude::*;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
 
 
-#[derive(Clone, Debug, Serialize, Default)]
 pub type TickBitMap<I = I24> = FxHashMap<I, U256>;
 
 /// Provides [`Self::next_initialized_tick_within_one_word`] for a tick bit map that implements
