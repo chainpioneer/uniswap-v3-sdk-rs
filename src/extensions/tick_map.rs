@@ -5,8 +5,9 @@
 use crate::prelude::*;
 use alloc::vec::Vec;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
+use alloy_primitives::private::serde::Serialize;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, PartialEq, Eq, Default)]
 pub struct TickMap<I = I24> {
     pub bitmap: TickBitMap<I>,
     pub inner: FxHashMap<I, Tick<I>>,
