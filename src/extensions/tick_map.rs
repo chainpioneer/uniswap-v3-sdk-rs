@@ -5,16 +5,9 @@
 use crate::prelude::*;
 use alloc::vec::Vec;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
-use serde::{Serialize, Deserialize};
-use std::hash::{Hash, Hasher};
+use serde::{Serialize};
 
-impl Hash for I24 {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.0.hash(state);
-    }
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize, Default)]
+#[derive(Clone, Debug, Serialize, Default)]
 pub struct TickMap<I = I24> {
     pub bitmap: TickBitMap<I>,
     pub inner: FxHashMap<I, Tick<I>>,
