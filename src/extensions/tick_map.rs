@@ -7,6 +7,7 @@ use alloc::vec::Vec;
 use core::hash::Hash;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
 use serde::{Serialize, Deserialize};
+use std::hash::{Hash, Hasher};
 
 impl Hash for I24 {
     fn hash<H: Hasher>(&self, state: &mut H) {
