@@ -103,6 +103,7 @@ impl Pool {
             token_b_symbol,
         ) = multicall.block(block_id).aggregate().await?;
         let sqrt_price_x96 = slot_0.sqrtPriceX96;
+        let tick = slot_0.tick;
         assert!(
             !sqrt_price_x96.is_zero(),
             "Pool has been created but not yet initialized"
@@ -126,6 +127,7 @@ impl Pool {
             sqrt_price_x96,
             liquidity._0,
             fee.tick_spacing().as_i32(),
+            tick.as_i32(),
         )
     }
     /// Get a [`Pool`] struct from pool address
@@ -289,6 +291,7 @@ impl<I: TickIndex> Pool<EphemeralTickMapDataProvider<I>> {
             pool.sqrt_ratio_x96,
             pool.liquidity,
             pool.tick_spacing.to_i24().as_i32(),
+            pool.,
             tick_data_provider,
         )
     }
