@@ -4,8 +4,15 @@
 
 use crate::prelude::*;
 use alloc::vec::Vec;
+use core::hash::Hash;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
 use serde::{Serialize, Deserialize};
+
+impl Hash for I24 {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.0.hash(state);
+    }
+}
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct TickMap<I = I24> {
