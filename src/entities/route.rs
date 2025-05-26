@@ -180,31 +180,37 @@ mod tests {
     }
 
     mod mid_price {
+        use alloy_primitives::Uint;
         use super::*;
 
         static POOL_0_1: Lazy<Pool> = Lazy::new(|| {
+            let ratio = encode_sqrt_ratio_x96(1, 5);
             Pool::new(
                 TOKEN0.clone(),
                 TOKEN1.clone(),
                 FeeAmount::MEDIUM,
-                encode_sqrt_ratio_x96(1, 5),
+                ratio,
                 0,
                 10,
+                ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )
             .unwrap()
         });
         static POOL_1_2: Lazy<Pool> = Lazy::new(|| {
+            let ratio: Uint<160, 3> = encode_sqrt_ratio_x96(15, 30);
             Pool::new(
                 TOKEN1.clone(),
                 TOKEN2.clone(),
                 FeeAmount::MEDIUM,
-                encode_sqrt_ratio_x96(15, 30),
+                ratio,
                 0,
                 FeeAmount::MEDIUM.tick_spacing().as_i32(),
+                ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )
             .unwrap()
         });
         static POOL_0_WETH: Lazy<Pool> = Lazy::new(|| {
+            let ratio: Uint<160, 3> = encode_sqrt_ratio_x96(1, 5);
             Pool::new(
                 TOKEN0.clone(),
                 WETH.clone(),
@@ -212,17 +218,20 @@ mod tests {
                 encode_sqrt_ratio_x96(3, 1),
                 0,
                 FeeAmount::MEDIUM.tick_spacing().as_i32(),
+                ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )
             .unwrap()
         });
         static POOL_1_WETH: Lazy<Pool> = Lazy::new(|| {
+            let ratio = encode_sqrt_ratio_x96(1, 7);
             Pool::new(
                 TOKEN1.clone(),
                 WETH.clone(),
                 FeeAmount::MEDIUM,
-                encode_sqrt_ratio_x96(1, 7),
+                ratio,
                 0,
                 FeeAmount::MEDIUM.tick_spacing().as_i32(),
+                ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )
             .unwrap()
         });

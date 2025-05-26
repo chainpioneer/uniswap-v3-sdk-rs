@@ -242,6 +242,7 @@ impl<TP: TickDataProvider> Position<TP> {
             sqrt_ratio_x96_lower,
             0, // liquidity doesn't matter
             self.pool.tick_spacing.to_i24().as_i32(),
+            sqrt_ratio_x96_lower.get_tick_at_sqrt_ratio().unwrap().as_i32(),
         )?;
         let pool_upper = Pool::new(
             self.pool.token0.clone(),
@@ -250,6 +251,7 @@ impl<TP: TickDataProvider> Position<TP> {
             sqrt_ratio_x96_upper,
             0, // liquidity doesn't matter
             self.pool.tick_spacing.to_i24().as_i32(),
+            sqrt_ratio_x96_upper.get_tick_at_sqrt_ratio().unwrap().as_i32(),
         )?;
 
         // Because the router is imprecise, we need to calculate the position that will be created
@@ -263,6 +265,7 @@ impl<TP: TickDataProvider> Position<TP> {
                 self.pool.sqrt_ratio_x96,
                 self.pool.liquidity,
                 self.pool.tick_spacing.to_i24().as_i32(),
+                self.pool.sqrt_ratio_x96.get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )?,
             self.tick_lower.try_into().unwrap(),
             self.tick_upper.try_into().unwrap(),
@@ -321,6 +324,7 @@ impl<TP: TickDataProvider> Position<TP> {
             sqrt_ratio_x96_lower,
             0, // liquidity doesn't matter
             self.pool.tick_spacing.to_i24().as_i32(),
+            sqrt_ratio_x96_lower.get_tick_at_sqrt_ratio().unwrap().as_i32(),
         )?;
         let pool_upper = Pool::new(
             self.pool.token0.clone(),
@@ -329,6 +333,7 @@ impl<TP: TickDataProvider> Position<TP> {
             sqrt_ratio_x96_upper,
             0, // liquidity doesn't matter
             self.pool.tick_spacing.to_i24().as_i32(),
+            sqrt_ratio_x96_upper.get_tick_at_sqrt_ratio().unwrap().as_i32(),
         )?;
 
         // we want the smaller amounts...
@@ -522,6 +527,7 @@ mod tests {
             *POOL_SQRT_RATIO_START,
             0,
             TICK_SPACING.as_i32(),
+            POOL_SQRT_RATIO_START.get_tick_at_sqrt_ratio().unwrap().as_i32()
         )
         .unwrap()
     });
@@ -768,7 +774,7 @@ mod tests {
     #[test]
     fn burn_amounts_with_slippage_is_correct_for_pool_at_min_price() {
         let position = Position::new(
-            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, TICK_SPACING.as_i32()).unwrap(),
+            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, TICK_SPACING.as_i32(), TICK_SPACING.as_i32()).unwrap(),
             100e18 as u128,
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING).as_i32(),
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * TWO).as_i32(),
@@ -791,6 +797,7 @@ mod tests {
                 MAX_SQRT_RATIO - ONE,
                 0,
                 FeeAmount::LOW.tick_spacing().as_i32(),
+                (MAX_SQRT_RATIO - ONE).get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )
             .unwrap(),
             100e18 as u128,
@@ -904,7 +911,7 @@ mod tests {
     #[test]
     fn mint_amounts_is_correct_for_pool_at_min_price() {
         let mut position = Position::new(
-            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, FeeAmount::LOW.tick_spacing().as_i32()).unwrap(),
+            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, FeeAmount::LOW.tick_spacing().as_i32(), FeeAmount::LOW.tick_spacing().as_i32()).unwrap(),
             100e18 as u128,
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING).as_i32(),
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * TWO).as_i32(),
@@ -927,6 +934,7 @@ mod tests {
                 MAX_SQRT_RATIO - ONE,
                 0,
                 FeeAmount::LOW.tick_spacing().as_i32(),
+                (MAX_SQRT_RATIO - ONE).get_tick_at_sqrt_ratio().unwrap().as_i32(),
             )
             .unwrap(),
             100e18 as u128,

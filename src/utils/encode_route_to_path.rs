@@ -60,17 +60,19 @@ where
 mod tests {
     use super::*;
     use crate::tests::*;
-    use alloy_primitives::hex;
+    use alloy_primitives::{hex, Uint};
     use once_cell::sync::Lazy;
 
     static POOL_1_2_LOW: Lazy<Pool> = Lazy::new(|| {
+        let ratio: Uint<160,3> = encode_sqrt_ratio_x96(1, 1);
         Pool::new(
             TOKEN1.clone(),
             TOKEN2.clone(),
             FeeAmount::LOW,
-            encode_sqrt_ratio_x96(1, 1),
+            ratio,
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
         )
         .unwrap()
     });

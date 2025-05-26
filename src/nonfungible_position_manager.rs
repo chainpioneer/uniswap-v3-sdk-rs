@@ -327,6 +327,7 @@ where
             position.pool.sqrt_ratio_x96,
             position.pool.liquidity,
             position.pool.tick_spacing.to_i24().as_i32(),
+            position.pool.tick_current.to_i24().as_i32(),
         )?,
         (options.liquidity_percentage.clone() * Percent::new(position.liquidity, 1))
             .quotient()

@@ -53,6 +53,7 @@ impl Pool {
         sqrt_ratio_x96: U160,
         liquidity: u128,
         tick_spacing: i32,
+        tick: i32,
     ) -> Result<Self, Error> {
         Self::new_with_tick_data_provider(
             token_a,
@@ -61,6 +62,7 @@ impl Pool {
             sqrt_ratio_x96,
             liquidity,
             tick_spacing,
+            tick,
             NoTickDataProvider,
         )
     }
@@ -216,6 +218,7 @@ impl<TP: TickDataProvider> Pool<TP> {
         sqrt_ratio_x96: U160,
         liquidity: u128,
         tick_spacing: i32,
+        tick: i32,
         tick_data_provider: TP,
     ) -> Result<Self, Error> {
         let (token0, token1) = if token_a.sorts_before(&token_b)? {
@@ -229,7 +232,7 @@ impl<TP: TickDataProvider> Pool<TP> {
             fee,
             sqrt_ratio_x96,
             liquidity,
-            tick_current: TP::Index::from_i24(sqrt_ratio_x96.get_tick_at_sqrt_ratio()?),
+            tick_current: TP::Index::from_i24(tick.to_i24()),
             tick_spacing: TP::Index::from_i24(tick_spacing.to_i24()),
             tick_data_provider,
         })
@@ -459,38 +462,38 @@ mod tests {
         #[should_panic(expected = "CHAIN_IDS")]
         fn cannot_be_used_for_tokens_on_different_chains() {
             let weth9 = WETH9::default().get(3).unwrap().clone();
-            Pool::new(USDC.clone(), weth9, FeeAmount::MEDIUM, ONE_ETHER, 0, FeeAmount::MEDIUM.tick_spacing().as_i32()).expect("CHAIN_IDS");
+            Pool::new(USDC.clone(), weth9, FeeAmount::MEDIUM, ONE_ETHER, 0, FeeAmount::MEDIUM.tick_spacing().as_i32(), FeeAmount::MEDIUM.tick_spacing().as_i32()).expect("CHAIN_IDS");
         }
 
         #[test]
         #[should_panic(expected = "ADDRESSES")]
         fn cannot_be_given_two_of_the_same_token() {
-            Pool::new(USDC.clone(), USDC.clone(), FeeAmount::MEDIUM, ONE_ETHER, 0, FeeAmount::MEDIUM.tick_spacing().as_i32())
+            Pool::new(USDC.clone(), USDC.clone(), FeeAmount::MEDIUM, ONE_ETHER, 0, FeeAmount::MEDIUM.tick_spacing().as_i32(), FeeAmount::MEDIUM.tick_spacing().as_i32())
                 .expect("ADDRESSES");
         }
 
         #[test]
         fn works_with_valid_arguments_for_empty_pool_medium_fee() {
             let weth9 = WETH9::default().get(1).unwrap().clone();
-            Pool::new(USDC.clone(), weth9, FeeAmount::MEDIUM, ONE_ETHER, 0, FeeAmount::MEDIUM.tick_spacing().as_i32()).unwrap();
+            Pool::new(USDC.clone(), weth9, FeeAmount::MEDIUM, ONE_ETHER, 0, FeeAmount::MEDIUM.tick_spacing().as_i32(), FeeAmount::MEDIUM.tick_spacing().as_i32()).unwrap();
         }
 
         #[test]
         fn works_with_valid_arguments_for_empty_pool_low_fee() {
             let weth9 = WETH9::default().get(1).unwrap().clone();
-            Pool::new(USDC.clone(), weth9, FeeAmount::LOW, ONE_ETHER, 0, FeeAmount::LOW.tick_spacing().as_i32()).unwrap();
+            Pool::new(USDC.clone(), weth9, FeeAmount::LOW, ONE_ETHER, 0, FeeAmount::LOW.tick_spacing().as_i32(), FeeAmount::LOW.tick_spacing().as_i32()).unwrap();
         }
 
         #[test]
         fn works_with_valid_arguments_for_empty_pool_lowest_fee() {
             let weth9 = WETH9::default().get(1).unwrap().clone();
-            Pool::new(USDC.clone(), weth9, FeeAmount::LOWEST, ONE_ETHER, 0, FeeAmount::LOWEST.tick_spacing().as_i32()).unwrap();
+            Pool::new(USDC.clone(), weth9, FeeAmount::LOWEST, ONE_ETHER, 0, FeeAmount::LOWEST.tick_spacing().as_i32(), FeeAmount::LOWEST.tick_spacing().as_i32()).unwrap();
         }
 
         #[test]
         fn works_with_valid_arguments_for_empty_pool_high_fee() {
             let weth9 = WETH9::default().get(1).unwrap().clone();
-            Pool::new(USDC.clone(), weth9, FeeAmount::HIGH, ONE_ETHER, 0, FeeAmount::HIGH.tick_spacing().as_i32()).unwrap();
+            Pool::new(USDC.clone(), weth9, FeeAmount::HIGH, ONE_ETHER, 0, FeeAmount::HIGH.tick_spacing().as_i32(), FeeAmount::HIGH.tick_spacing().as_i32()).unwrap();
         }
     }
 
@@ -508,7 +511,8 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(1, 1),
             0, 
-            FeeAmount::LOW.tick_spacing().as_i32()
+            FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert!(pool.token0.equals(&DAI.clone()));
@@ -518,7 +522,8 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(1, 1),
             0,
-            FeeAmount::LOW.tick_spacing().as_i32()
+            FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert!(pool.token0.equals(&DAI.clone()));
@@ -532,7 +537,8 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(1, 1),
             0,
-            FeeAmount::LOW.tick_spacing().as_i32()
+            FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert!(pool.token1.equals(&USDC.clone()));
@@ -542,7 +548,8 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(1, 1),
             0,
-            FeeAmount::LOW.tick_spacing().as_i32()
+            FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert!(pool.token1.equals(&USDC.clone()));
@@ -557,6 +564,7 @@ mod tests {
             encode_sqrt_ratio_x96(101e6 as u128, 100e18 as u128),
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert_eq!(pool.token0_price().to_significant(5, None).unwrap(), "1.01");
@@ -566,7 +574,8 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(101e6 as u128, 100e18 as u128),
             0,
-            FeeAmount::LOW.tick_spacing().as_i32()
+            FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert_eq!(pool.token0_price().to_significant(5, None).unwrap(), "1.01");
@@ -581,6 +590,7 @@ mod tests {
             encode_sqrt_ratio_x96(101e6 as u128, 100e18 as u128),
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert_eq!(
@@ -593,6 +603,7 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(101e6 as u128, 100e18 as u128),
             0,
+            FeeAmount::LOW.tick_spacing().as_i32(),
             FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
@@ -611,6 +622,7 @@ mod tests {
             encode_sqrt_ratio_x96(1, 1),
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert_eq!(pool.price_of(&DAI.clone()).unwrap(), pool.token0_price());
@@ -627,6 +639,7 @@ mod tests {
             encode_sqrt_ratio_x96(1, 1),
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         pool.price_of(&WETH9::default().get(1).unwrap().clone())
@@ -642,6 +655,7 @@ mod tests {
             encode_sqrt_ratio_x96(1, 1),
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert_eq!(pool.chain_id(), 1);
@@ -651,6 +665,7 @@ mod tests {
             FeeAmount::LOW,
             encode_sqrt_ratio_x96(1, 1),
             0,
+            FeeAmount::LOW.tick_spacing().as_i32(),
             FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
@@ -666,6 +681,7 @@ mod tests {
             encode_sqrt_ratio_x96(1, 1),
             0,
             FeeAmount::LOW.tick_spacing().as_i32(),
+            FeeAmount::LOW.tick_spacing().as_i32(),
         )
         .unwrap();
         assert!(pool.involves_token(&USDC.clone()));
@@ -679,13 +695,15 @@ mod tests {
         use once_cell::sync::Lazy;
 
         static POOL: Lazy<Pool<TickListDataProvider>> = Lazy::new(|| {
+            let sqrt_ratio = encode_sqrt_ratio_x96(1, 1);
             Pool::new_with_tick_data_provider(
                 USDC.clone(),
                 DAI.clone(),
                 FeeAmount::LOW,
-                encode_sqrt_ratio_x96(1, 1),
+                sqrt_ratio,
                 ONE_ETHER.into_limbs()[0] as u128,
                 FeeAmount::LOW.tick_spacing().as_i32(),
+                sqrt_ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
                 TickListDataProvider::new(
                     vec![
                         Tick::new(

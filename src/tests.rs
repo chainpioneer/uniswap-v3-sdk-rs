@@ -3,7 +3,7 @@ use crate::prelude::{
     *,
 };
 pub(crate) use alloc::vec;
-use alloy_primitives::U160;
+use alloy_primitives::{Uint, U160};
 use once_cell::sync::Lazy;
 use uniswap_sdk_core::{prelude::*, token};
 
@@ -68,6 +68,7 @@ pub(crate) const SQRT_RATIO_X96: U160 = U160::from_limbs([0, 4294967296, 0]);
 pub(crate) const LIQUIDITY: u128 = 1_000_000;
 
 pub(crate) static POOL_0_1: Lazy<Pool> = Lazy::new(|| {
+    let ratio: Uint<160, 3> = encode_sqrt_ratio_x96(1, 1);
     Pool::new(
         TOKEN0.clone(),
         TOKEN1.clone(),
@@ -75,28 +76,33 @@ pub(crate) static POOL_0_1: Lazy<Pool> = Lazy::new(|| {
         encode_sqrt_ratio_x96(1, 1),
         0,
         FeeAmount::MEDIUM.tick_spacing().as_i32(),
+        ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
     )
     .unwrap()
 });
 pub(crate) static POOL_0_WETH: Lazy<Pool> = Lazy::new(|| {
+    let ratio = encode_sqrt_ratio_x96(1, 1);
     Pool::new(
         TOKEN0.clone(),
         WETH.clone(),
         FeeAmount::MEDIUM,
-        encode_sqrt_ratio_x96(1, 1),
+        ratio,
         0,
         FeeAmount::MEDIUM.tick_spacing().as_i32(),
+        ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
     )
     .unwrap()
 });
 pub(crate) static POOL_1_WETH: Lazy<Pool> = Lazy::new(|| {
+    let ratio: Uint<160, 3> = encode_sqrt_ratio_x96(1, 1); 
     Pool::new(
         TOKEN1.clone(),
         WETH.clone(),
         FeeAmount::MEDIUM,
-        encode_sqrt_ratio_x96(1, 1),
+        ratio,
         0,
         FeeAmount::MEDIUM.tick_spacing().as_i32(),
+        ratio.get_tick_at_sqrt_ratio().unwrap().as_i32(),
     )
     .unwrap()
 });
@@ -109,6 +115,7 @@ pub(crate) fn make_pool(token0: Token, token1: Token) -> Pool<TickListDataProvid
         SQRT_RATIO_X96,
         LIQUIDITY,
         FEE_AMOUNT.tick_spacing().as_i32(),
+        SQRT_RATIO_X96.get_tick_at_sqrt_ratio().unwrap().as_i32(),
         TickListDataProvider::new(
             vec![
                 Tick::new(
