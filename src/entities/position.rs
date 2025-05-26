@@ -911,7 +911,7 @@ mod tests {
     #[test]
     fn mint_amounts_is_correct_for_pool_at_min_price() {
         let mut position = Position::new(
-            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, FeeAmount::LOW.tick_spacing().as_i32(), FeeAmount::LOW.tick_spacing().as_i32()).unwrap(),
+            Pool::new(DAI.clone(), USDC.clone(), FeeAmount::LOW, MIN_SQRT_RATIO, 0, FeeAmount::LOW.tick_spacing().as_i32(), MIN_SQRT_RATIO.get_tick_at_sqrt_ratio().unwrap().as_i32()).unwrap(),
             100e18 as u128,
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING).as_i32(),
             (nearest_usable_tick(*POOL_TICK_CURRENT, TICK_SPACING) + TICK_SPACING * TWO).as_i32(),

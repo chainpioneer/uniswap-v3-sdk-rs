@@ -291,7 +291,7 @@ impl<I: TickIndex> Pool<EphemeralTickMapDataProvider<I>> {
             pool.sqrt_ratio_x96,
             pool.liquidity,
             pool.tick_spacing.to_i24().as_i32(),
-            pool.,
+            pool.tick_current.to_i24().as_i32(),
             tick_data_provider,
         )
     }
@@ -338,6 +338,7 @@ impl<I: TickIndex> Pool<EphemeralTickMapDataProvider<I>> {
             pool.sqrt_ratio_x96,
             pool.liquidity,
             tick_spacing,
+            pool.tick_current,
             tick_data_provider,
         )
     }
