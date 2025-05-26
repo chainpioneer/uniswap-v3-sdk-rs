@@ -140,6 +140,7 @@ impl Position {
             slot0.sqrtPriceX96,
             active_liquidity,
             fee.tick_spacing().as_i32(),
+            slot0.tick.as_i32(),
         )?;
         Ok(Self::new(
             pool,
@@ -200,6 +201,7 @@ impl<I: TickIndex> Position<EphemeralTickMapDataProvider<I>> {
             pool.sqrt_ratio_x96,
             pool.liquidity,
             pool.fee.tick_spacing().as_i32(),
+            pool.tick_current.to_i24().as_i32(),
             tick_data_provider,
         )?;
         Ok(Self::new(
@@ -433,6 +435,7 @@ where
         sqrt_price_x96,
         position.pool.liquidity,
         position.pool.tick_spacing.to_i24().as_i32(),
+        position.pool.tick_current.to_i24().as_i32(),
         position.pool.tick_data_provider,
     )?;
     Ok(Position::new(

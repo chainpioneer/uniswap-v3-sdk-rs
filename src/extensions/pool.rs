@@ -149,6 +149,7 @@ impl Pool {
         token_b: Address,
         fee: FeeAmount,
         sqrt_price_x96: U160,
+        tick: i32,
         provider: P,
         block_id: Option<BlockId>,
     ) -> Result<Self, Error>
@@ -169,6 +170,7 @@ impl Pool {
             .multicall()
             .add(pool_contract.liquidity())
             .add(pool_contract.tickSpacing())
+            .add(pool_contract.slot0())
             .add(token_a_contract.decimals())
             .add(token_a_contract.name())
             .add(token_a_contract.symbol())
@@ -178,6 +180,7 @@ impl Pool {
         let (
             liquidity,
             tick_spacing,
+            slot0,
             token_a_decimals,
             token_a_name,
             token_a_symbol,
@@ -205,6 +208,7 @@ impl Pool {
             sqrt_price_x96,
             liquidity._0,
             tick_spacing._0.as_i32(),
+            tick,
         )
     }
 }
@@ -305,6 +309,7 @@ impl<I: TickIndex> Pool<EphemeralTickMapDataProvider<I>> {
         fee: FeeAmount,
         sqrt_ratio: U160,
         tick_spacing: i32,
+        tick: i32,
         provider: P,
         block_id: Option<BlockId>,
     ) -> Result<Self, Error>
@@ -319,6 +324,7 @@ impl<I: TickIndex> Pool<EphemeralTickMapDataProvider<I>> {
             token_b,
             fee,
             sqrt_ratio,
+            tick,
             provider.root(),
             block_id,
         )
