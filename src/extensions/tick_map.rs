@@ -4,7 +4,6 @@
 
 use crate::prelude::*;
 use alloc::vec::Vec;
-use core::hash::Hash;
 use alloy_primitives::{aliases::I24, map::rustc_hash::FxHashMap, uint, U256};
 use serde::{Serialize, Deserialize};
 use std::hash::{Hash, Hasher};
