@@ -170,7 +170,6 @@ impl Pool {
             .multicall()
             .add(pool_contract.liquidity())
             .add(pool_contract.tickSpacing())
-            .add(pool_contract.slot0())
             .add(token_a_contract.decimals())
             .add(token_a_contract.name())
             .add(token_a_contract.symbol())
@@ -180,7 +179,6 @@ impl Pool {
         let (
             liquidity,
             tick_spacing,
-            slot0,
             token_a_decimals,
             token_a_name,
             token_a_symbol,
