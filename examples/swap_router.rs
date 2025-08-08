@@ -31,7 +31,7 @@ sol! {
 async fn main() {
     dotenv::dotenv().ok();
     let rpc_url: Url = std::env::var("MAINNET_RPC_URL").unwrap().parse().unwrap();
-    let provider = ProviderBuilder::new().on_http(rpc_url.clone());
+    let provider = ProviderBuilder::new().connect_http(rpc_url.clone());
     let block_id = BlockId::from(17000000);
     const WBTC: Address = address!("2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599");
     let wbtc = token!(1, WBTC, 8, "WBTC");
