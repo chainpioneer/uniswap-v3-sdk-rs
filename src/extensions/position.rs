@@ -28,7 +28,7 @@ use uniswap_sdk_core::{prelude::*, token};
 pub const fn get_nonfungible_position_manager_contract<N, P>(
     nonfungible_position_manager: Address,
     provider: P,
-) -> IUniswapV3NonfungiblePositionManagerInstance<(), P, N>
+) -> IUniswapV3NonfungiblePositionManagerInstance<P, N>
 where
     N: Network,
     P: Provider<N>,
@@ -78,7 +78,7 @@ where
     ) = multicall.block(block_id_).aggregate().await?;
     let pool = Pool::from_pool_key(
         chain_id,
-        factory._0,
+        factory,
         token0,
         token1,
         fee.into(),
@@ -280,7 +280,7 @@ where
         .add(npm_contract.positions(token_id));
     let (factory, position) = multicall.block(block_id_).aggregate().await?;
     let pool_contract = get_pool_contract(
-        factory._0,
+        factory,
         position.token0,
         position.token1,
         position.fee.into(),
@@ -314,10 +314,10 @@ where
         )
     } else {
         (
-            fee_growth_global_0x128._0
+            fee_growth_global_0x128
                 - fee_growth_outside_0x128_lower
                 - fee_growth_outside_0x128_upper,
-            fee_growth_global_1x128._0
+            fee_growth_global_1x128
                 - fee_growth_outside_1x128_lower
                 - fee_growth_outside_1x128_upper,
         )
@@ -358,8 +358,7 @@ where
         .tokenURI(token_id)
         .block(block_id.unwrap_or(BlockId::Number(BlockNumberOrTag::Latest)))
         .call()
-        .await?
-        ._0;
+        .await?;
     let json_uri = base64::Engine::decode(
         &base64::engine::general_purpose::URL_SAFE,
         uri.replace("data:application/json;base64,", ""),

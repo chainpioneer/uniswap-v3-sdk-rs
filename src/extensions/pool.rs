@@ -26,7 +26,7 @@ pub fn get_pool_contract<N, P>(
     token_b: Address,
     fee: FeeAmount,
     provider: P,
-) -> IUniswapV3PoolInstance<(), P, N>
+) -> IUniswapV3PoolInstance<P, N>
 where
     N: Network,
     P: Provider<N>,
@@ -41,7 +41,7 @@ where
 pub fn get_pool_contract_at<N, P>(
     pool: Address,
     provider: P,
-) -> IUniswapV3PoolInstance<(), P, N>
+) -> IUniswapV3PoolInstance<P, N>
 where
     N: Network,
     P: Provider<N>,
@@ -112,20 +112,20 @@ impl Pool {
             token!(
                 chain_id,
                 token_a,
-                token_a_decimals._0,
-                token_a_symbol._0,
-                token_a_name._0
+                token_a_decimals,
+                token_a_symbol,
+                token_a_name
             ),
             token!(
                 chain_id,
                 token_b,
-                token_b_decimals._0,
-                token_b_symbol._0,
-                token_b_name._0
+                token_b_decimals,
+                token_b_symbol,
+                token_b_name
             ),
             fee,
             sqrt_price_x96,
-            liquidity._0,
+            liquidity,
             fee.tick_spacing().as_i32(),
             tick.as_i32(),
         )
@@ -191,21 +191,21 @@ impl Pool {
             token!(
                 chain_id,
                 token_a,
-                token_a_decimals._0,
-                token_a_symbol._0,
-                token_a_name._0
+                token_a_decimals,
+                token_a_symbol,
+                token_a_name
             ),
             token!(
                 chain_id,
                 token_b,
-                token_b_decimals._0,
-                token_b_symbol._0,
-                token_b_name._0
+                token_b_decimals,
+                token_b_symbol,
+                token_b_name
             ),
             fee,
             sqrt_price_x96,
-            liquidity._0,
-            tick_spacing._0.as_i32(),
+            liquidity,
+            tick_spacing.as_i32(),
             tick,
         )
     }
