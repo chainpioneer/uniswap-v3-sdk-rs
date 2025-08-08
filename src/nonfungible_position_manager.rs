@@ -1,5 +1,5 @@
 use crate::prelude::{Error, *};
-use alloy_primitives::{Bytes, PrimitiveSignature, B256, U256};
+use alloy_primitives::{Bytes, Signature, B256, U256};
 use alloy_sol_types::{eip712_domain, Eip712Domain, SolCall, SolStruct};
 use num_traits::ToPrimitive;
 use uniswap_sdk_core::prelude::*;
@@ -85,7 +85,7 @@ impl NFTPermitData {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct NFTPermitOptions {
-    pub signature: PrimitiveSignature,
+    pub signature: Signature,
     pub deadline: U256,
     pub spender: Address,
 }
