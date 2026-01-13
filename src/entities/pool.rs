@@ -212,8 +212,8 @@ impl<TP: TickDataProvider> Pool<TP> {
     /// * `tick_data_provider`: A tick data provider that can return tick data
     #[inline]
     pub fn new_with_tick_data_provider(
-        token_a: Token,
-        token_b: Token,
+        token0: Token,
+        token1: Token,
         fee: FeeAmount,
         sqrt_ratio_x96: U160,
         liquidity: u128,
@@ -221,11 +221,6 @@ impl<TP: TickDataProvider> Pool<TP> {
         tick: i32,
         tick_data_provider: TP,
     ) -> Result<Self, Error> {
-        let (token0, token1) = if token_a.sorts_before(&token_b)? {
-            (token_a, token_b)
-        } else {
-            (token_b, token_a)
-        };
         Ok(Self {
             token0,
             token1,
