@@ -171,20 +171,12 @@ impl Pool {
             .add(pool_contract.liquidity())
             .add(pool_contract.tickSpacing())
             .add(token_a_contract.decimals())
-            .add(token_a_contract.name())
-            .add(token_a_contract.symbol())
-            .add(token_b_contract.decimals())
-            .add(token_b_contract.name())
-            .add(token_b_contract.symbol());
+            .add(token_b_contract.decimals());
         let (
             liquidity,
             tick_spacing,
             token_a_decimals,
-            token_a_name,
-            token_a_symbol,
             token_b_decimals,
-            token_b_name,
-            token_b_symbol,
         ) = multicall.block(block_id).aggregate().await?;
 
         Self::new(
@@ -192,15 +184,11 @@ impl Pool {
                 chain_id,
                 token_a,
                 token_a_decimals,
-                token_a_symbol,
-                token_a_name
             ),
             token!(
                 chain_id,
                 token_b,
                 token_b_decimals,
-                token_b_symbol,
-                token_b_name
             ),
             fee,
             sqrt_price_x96,
